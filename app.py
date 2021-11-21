@@ -62,7 +62,7 @@ class dbcurd:
         self.connection.commit()
 
     def validate(self,url):
-        if(re.search("http://",url) or re.search("https://",url)):
+        if(re.search("http://",url) or re.search("https://",url) or re.search("ftp://",url) or re.search("gopher://",url)):
             print("valid URL")
             return 1
         else:
@@ -147,10 +147,10 @@ class ShortUrl():
             if(not hashValue):
                 break
             hashValue /= 26
-            hashString+=(chr(int(hashValue % 26)+random.choice([65,97])))
-            if(not hashValue):
+            hashString+=(chr(int(hashValue2 % 26)+random.choice([65,97])))
+            if(not hashValue2):
                 break
-            hashValue /= 26
+            hashValue2 /= 26
             itterate -=1;
         shortUrl = f'{self.domain}/{hashString}'           
         print(shortUrl)
@@ -196,7 +196,7 @@ def shortUrl():
         else:
             return render_template("index.html")
     else:
-        return "404 Not Found"
+        return "Invalid Session"
 
 @app.route('/')
 @app.route('/login', methods =['GET', 'POST'])
@@ -275,4 +275,4 @@ def Redirect(url):
     
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="localhost", port=5000,debug=True)

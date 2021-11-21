@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title> Index </title>
+		<title> SOLO URL </title>
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">					
 	</head>
 	<body></br></br></br></br></br>
@@ -13,7 +13,8 @@
 				<h4 class="word">SOLO SHORT URL DASHBOARD</h4>
                 <!-- <h3>{{msg}}</h3> -->
 			</div></br></br></br>
-                <h4>Total URL Generate : {{count}}</h4>           
+                <h4>Total URL Generated : {{count}}</h4>      
+                <a href="{{ url_for('shortUrl') }}" class="btn">Gen short url</a>
 				<a href="{{ url_for('logout') }}" class="btn">Logout</a>
 		</div>
 		</div>
