@@ -1,0 +1,29 @@
+<!-- Store this code in 'index.html' file inside the 'templates' folder-->
+
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title> Index </title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">					
+	</head>
+	<body></br></br></br></br></br>
+		<div align="center">
+		<div align="center" class="border">
+			<div class="header">
+				<h4 class="word">SOLO SHORT URL GENERATOR</h4>
+                <!-- <h3>{{url}}</h3> -->
+			</div></br></br></br>
+                <h4>"Here we go requested short URL for you"</h4>
+                <form class="c-form" action="/shortUrl" method="POST">
+                    <input class="c-form__input" " type="text" value ={{url}} >
+                    <label class="c-form__buttonLabel" for="checkbox">
+                    <!-- <input class="c-form__button" type="submit"></button> -->
+                    </label>
+                    <label class="c-form__toggle" for="checkbox" data-title="Generate Short URL"></label>
+                </form>
+                <a href="{{url_for('shortUrl')}}" class="btn">Gen Again</a>
+				<a href="{{ url_for('logout') }}" class="btn">Logout</a>
+		</div>
+		</div>
+	</body>
+</html>

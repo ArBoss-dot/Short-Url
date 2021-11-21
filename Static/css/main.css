@@ -1,0 +1,202 @@
+
+  @charset "UTF-8";
+  body {
+    
+    font-size: 10px;
+    font-family: Roboto, sans-serif;
+    background: #b4c6a6;
+    /* background:linear-gradient(to right,#201416, #642020, #510107); */
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    align-items: center;
+  }
+  
+  .container{
+    place-items: center;
+    justify-content: center;
+  }
+
+  h1{
+      font-family: Roboto, sans-serif ;
+      font-size: 3em;
+      justify-content: center;
+      align-items: center;
+      color: #ffffff;
+
+  }
+  .c-checkbox {
+    display: none;
+  }
+  .c-checkbox:checked + .c-formContainer .c-form {
+    width: 37.5em;
+  }
+  .c-checkbox:checked + .c-formContainer .c-form__toggle {
+    visibility: hidden;
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  .c-checkbox:checked + .c-formContainer .c-form__input,
+  .c-checkbox:checked + .c-formContainer .c-form__buttonLabel {
+    transition: 0.2s 0.1s;
+    visibility: visible;
+    opacity: 1;
+    transform: scale(1);
+  }
+  .c-checkbox:not(:checked) + .c-formContainer .c-form__input:required:valid ~ .c-form__toggle::before, .c-checkbox:checked + .c-formContainer .c-form__input:required:valid ~ .c-form__toggle::before {
+    content: "Thank You! ";
+  }
+  .c-checkbox:not(:checked) + .c-formContainer .c-form__input:required:valid ~ .c-form__toggle {
+    pointer-events: none;
+    cursor: default;
+  }
+  
+  .c-formContainer,
+  .c-form,
+  .c-form__toggle {
+    width: 20em;
+    height: 6.25em;
+  }
+  
+  .c-formContainer {
+    position: relative;
+    font-weight: 700;
+  }
+  
+  .c-form,
+  .c-form__toggle {
+    position: absolute;
+    border-radius: 6.25em;
+    background-color: #ffffff;
+    transition: 0.2s;
+  }
+  
+  .c-form {
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.625em;
+    box-sizing: border-box;
+    box-shadow: 0 0.125em 0.3125em rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+  }
+  
+  .c-form__toggle {
+    color: #df4038;
+    top: 0;
+    cursor: pointer;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .c-form__toggle::before {
+    font-size: 1.75em;
+    content: attr(data-title);
+  }
+  
+  .c-form__input,
+  .c-form__button {
+    font: inherit;
+    border: 0;
+    outline: 0;
+    border-radius: 5em;
+    box-sizing: border-box;
+  }
+  
+  .c-form__input,
+  .c-form__buttonLabel {
+    font-size: 1.75em;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.7);
+    transition: 0s;
+  }
+  
+  .c-form__input {
+    color: #ffcccc;
+    height: 100%;
+    width: 100%;
+    padding: 0 0.714em;
+  }
+  .c-form__input::placeholder {
+    color: currentColor;
+  }
+  .c-form__input:required:valid {
+    color: #df4038;
+  }
+  .c-form__input:required:valid + .c-form__buttonLabel {
+    color: #ffffff;
+  }
+  .c-form__input:required:valid + .c-form__buttonLabel::before {
+    pointer-events: initial;
+  }
+  
+  .c-form__buttonLabel {
+    color: #ff928c;
+    height: 100%;
+    width: auto;
+  }
+  .c-form__buttonLabel::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    cursor: pointer;
+  }
+  
+  .c-form__button {
+    color: inherit;
+    padding: 0;
+    height: 100%;
+    width: 5em;
+    background-color: #df4038;
+  }
+
+  
+
+ /* ////////////////////////
+  */
+  .content {
+    display: flex;
+    position: relative;
+    background: #fff;
+    border-radius:8px;
+  }
+  .content > input {
+    padding: 1rem;
+    outline: none;
+    border: none;
+    background: #fff;
+    border-radius: 5px 0 0 5px;
+  }
+  button {
+    cursor: pointer;
+    border-radius: 0 5px 5px 0;
+    height: 100%;
+    width: 50px;
+    outline: none;
+    border: none;
+    border-left: 1px solid gray;
+    background: #fff;
+  }
+  .popup {
+    position: absolute;
+    color: #FFF1AF;
+    background: #66806a;
+    border-radius: 5px;
+    padding: 0.4rem 0.7rem;
+    font-size: 12px;
+    top: 0px;
+    right: -8px;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.5s;
+  }
+  button:hover + .popup {
+    top: -40px;
+    opacity: 1;
+  }
+  
