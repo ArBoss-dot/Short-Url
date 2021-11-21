@@ -1,0 +1,21 @@
+<!-- Store this code in 'index.html' file inside the 'templates' folder-->
+
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title> Index </title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">					
+	</head>
+	<body></br></br></br></br></br>
+		<div align="center">
+		<div align="center" class="border">
+			<div class="header">
+				<h4 class="word">SOLO SHORT URL DASHBOARD</h4>
+                <!-- <h3>{{msg}}</h3> -->
+			</div></br></br></br>
+                <h4>Total URL Generate : {{count}}</h4>           
+				<a href="{{ url_for('logout') }}" class="btn">Logout</a>
+		</div>
+		</div>
+	</body>
+</html>
