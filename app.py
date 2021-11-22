@@ -1,10 +1,12 @@
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect,jsonify, json
 from flask.globals import request, session
 import mysql.connector
 import datetime
 import random
 import re
 from mysql.connector import connect, Error
+from flask_wtf import FlaskForm
+from wtforms import SelectField
 
 app = Flask(__name__)
 
@@ -35,7 +37,7 @@ class dbcurd:
             return 0;
 
     def fetchActual(self,hashString):
-        curr = self.connection.cursor();
+        curr = self.connection.cursor()
         search_for = (f'SELECT * FROM URL_INFO WHERE SHORT_URL="{hashString}"')
         curr.execute(search_for)
         result = curr.fetchall()
@@ -44,21 +46,48 @@ class dbcurd:
         else:
             return 0
 
-    def insertToDb(self,actualUrl,shortUrl):
+    def insertToDb(self,userName,actualUrl,shortUrl):
         curr = self.connection.cursor()
-        sql = "INSERT INTO URL_INFO VALUES (%s, %s, %s)"
-        val = (f"{actualUrl}",f"{shortUrl}",0)
+        sql = "INSERT INTO URL_INFO VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        val = (f"{userName}",f"{actualUrl}",f"{shortUrl}",0,0,0,0,0,0)
         try:
             curr.execute(sql,val)
             self.connection.commit()
         except Error as e:
             print(e)
-    def updateHitCount(self,actualUrl):
+
+    def updateHitCount(self,actualUrl,browser,device):
         curr = self.connection.cursor()
-        url,shrtur,hitcount = self.duplicatecheck(actualUrl)
+        row=(self.duplicatecheck(actualUrl))
+        hitcount = row[3]
+        windows = row[4]
+        linux = row[5]
+        android = row[6]
+        chrome =row[7]
+        safari = row[8]
         hitcount+=1
-        sql = f'UPDATE URL_INFO SET HIT_COUNT={hitcount} WHERE ACTUAL_URL ="{url}"'
+        sql = f'UPDATE URL_INFO SET HIT_COUNT={hitcount} WHERE ACTUAL_URL ="{actualUrl}"'
         curr.execute(sql)
+        if (re.search("Google Chrome",browser)):
+            chrome+=1
+            sql = f'UPDATE URL_INFO SET Chrome={chrome} WHERE ACTUAL_URL ="{actualUrl}"'  
+            curr.execute(sql)
+        elif (re.search("Safari",browser)):
+            safari+=1
+            sql = f'UPDATE URL_INFO SET FireFox={safari} WHERE ACTUAL_URL ="{actualUrl}"'  
+            curr.execute(sql)
+        if (re.search("Android",device)):
+            android+=1
+            sql = f'UPDATE URL_INFO SET Android={android} WHERE ACTUAL_URL ="{actualUrl}"'  
+            curr.execute(sql)
+        elif (re.search("Windows",device)):
+            windows+=1
+            sql = f'UPDATE URL_INFO SET Windows={windows} WHERE ACTUAL_URL ="{actualUrl}"'  
+            curr.execute(sql)
+        else:
+            linux+=1
+            sql = f'UPDATE URL_INFO SET Linux={linux} WHERE ACTUAL_URL ="{actualUrl}"'  
+            curr.execute(sql)
         self.connection.commit()
 
     def validate(self,url):
@@ -119,11 +148,22 @@ class dbcurd:
 
     def getDashBoardData(self,userName):
         curr = self.connection.cursor()
-        search_for = (f'SELECT * FROM USERS WHERE UserName="{userName}"')
+        search_for = (f'SELECT SHORT_URL FROM URL_INFO WHERE UserName="{userName}"')
         curr.execute(search_for)
-        account = curr.fetchone()
-        id,name,paswd,email,count = account
-        return count;
+        account = curr.fetchall()
+        listUrl = []
+        for value in account:
+            listUrl.append(value[0]);
+        print(listUrl)
+        # id,name,paswd,email,count = account
+        return listUrl
+
+    def fetchUrlCount(self,userName):
+        curr = self.connection.cursor()
+        search_for = (f'SELECT UrlCnt FROM USERS WHERE UserName="{userName}"')
+        curr.execute(search_for)
+        count = curr.fetchone()
+        return count
 
 
 
@@ -153,17 +193,57 @@ class ShortUrl():
             hashValue2 /= 26
             itterate -=1;
         shortUrl = f'{self.domain}/{hashString}'           
-        print(shortUrl)
+        # print(shortUrl)
         return shortUrl
+
+class Form(FlaskForm):
+    URL = SelectField('URL', choices=[])
+
+
 @app.route('/dashBoard',methods=['GET','POST'])
 def dashBoard():
     db = dbcurd()
+    form = Form()
+    
     if(session):
-        totalCount = db.getDashBoardData(session['username'])
-        return render_template("dashboard.html", count=totalCount)
+        form.URL.choices =  db.getDashBoardData(session['username'])
+        print(db.getDashBoardData(session['username']))
+        if request.method == 'POST':
+            if(not (form.URL.data)):
+                return render_template("dropdown.html", form=form,msg ="No URL Available")
+            else:
+                URL = db.fetchActual(form.URL.data)
+                urlData=[]
+                for value in URL :
+                    urlData.append(value)
+                totalUrl = db.fetchUrlCount(session['username'])
+                urlData.append(totalUrl)
+                return render_template("final_dash.html",urlData = urlData)
+            # return '<h1>HIT_Count : {}, WINDOWS: {}, Android: {}</h1>'.format(hit,win,andro)
+        else:
+            # return render_template('index.html', form=form)
+            # totalCount = db.getDashBoardData(session['username'])
+            totalUrl = db.fetchUrlCount(session['username'])
+            return render_template("dropdown.html", form=form,UrlCount = totalUrl[0])
     else:
         return "Invalid Session"    
  
+@app.route('/url/<get_state>')
+def statebycountry(get_state):
+    db = dbcurd()
+    URL = db.fetchActual(form.URL.data)
+    ul,ac,sh,hit,win,lin,andro,chro,fire = URL
+    stateArray = []
+    for city in state:
+        stateObj = {}
+        stateObj['Hit_Count'] = hit
+        stateObj['Windows'] = win
+        stateObj['Linux'] = lin
+        stateObj['Android'] = andro
+        stateObj['Chrome'] = chro
+        stateObj['Firefox'] = fire
+        stateArray.append(stateObj)
+    return jsonify({'statecountry' : stateArray})
 
 
 @app.route('/shortUrl',methods=['GET','POST'])
@@ -171,22 +251,22 @@ def shortUrl():
     if(session):
         if request.method == 'POST':
             inputUrl = request.form['content']
-            print(inputUrl)
+            # print(inputUrl)
             db = dbcurd()
             if(db.validate(inputUrl)):
                 if(db.duplicatecheck(inputUrl)):
                     shrturl=(db.duplicatecheck(inputUrl))[1]
-                    print("short URL already exist for URL",inputUrl,"is",shrturl)
+                    # print("short URL already exist for URL",inputUrl,"is",shrturl)
                     return render_template("shrturl.html", url=shrturl)
                 else:
-                    print("generating new short URL")
+                    # print("generating new short URL")
                     createUrl = ShortUrl(inputUrl,"http://127.0.0.1:5000")
                     shortUrl = createUrl.genShUrl()
                     while(db.fetchActual(shortUrl)):
                         shortUrl = createUrl.genShUrl()
                     if(not( db.fetchActual(shortUrl))):
-                        db.insertToDb(inputUrl,shortUrl)    
-                    print("fetched Actual url for shortUrl",shortUrl,"is",db.fetchActual(shortUrl)[0])
+                        db.insertToDb(session['username'],inputUrl,shortUrl)    
+                    # print("fetched Actual url for shortUrl",shortUrl,"is",db.fetchActual(shortUrl)[0])
                     db.incrementUrlCount(session['username'])
                     return render_template("shrturl.html", url=shortUrl)
             else:
@@ -263,14 +343,22 @@ def register():
 @app.route('/<string:url>',methods=['GET'])
 def Redirect(url):
     db = dbcurd()
-    print(url)
+    # print(url)
+    browser = request.headers.get('Sec-Ch-Ua')
+    platform = request.headers.get('Sec-Ch-Ua-Platform')
+    print(browser)
+    print(platform)
+# Sec-Ch-Ua: " Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"
+# Sec-Ch-Ua-Mobile: ?0
+# Sec-Ch-Ua-Platform: "Windows"
     shortUrl = "http://127.0.0.1:5000/"+url 
     try:
-        actualUrl = str(db.fetchActual(shortUrl)[0])
+        actualUrl = str(db.fetchActual(shortUrl)[1])
+
     except:
         return  ("http://127.0.0.1:5000/"+url+" is Not found")
     else:
-        db.updateHitCount(actualUrl)
+        db.updateHitCount(actualUrl,browser,platform)
         return redirect(actualUrl)
     
 

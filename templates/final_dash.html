@@ -1,0 +1,35 @@
+<!-- Store this code in 'index.html' file inside the 'templates' folder-->
+
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title> SOLO URL </title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">					
+        <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> -->
+    </head>
+	<body></br></br></br></br></br>
+		<div align="center">
+		<div align="center" class="border">
+			<div class="header">
+				<h4 class="word">DASHBOARD</h4>
+                <!-- <h3>{{url}}</h3> -->
+			</div></br>
+                <h3 class="abc1">Total Hits : {{urlData[3]}}</h3>
+                </br>
+                <h3 class="abc1">Device:</h3>
+                    <h4 class="abc">Windows:{{urlData[4]}} </h4>
+                    <h4 class="abc">Linux:{{urlData[5]}}</h4>
+                    <h4 class="abc">Android:{{urlData[6]}}</h4>    
+                </br>  
+                <h3 class="abc1">Browsers:</h3> 
+                    <h4 class="abc">Chrome:{{urlData[7]}} </h4>
+                    <h4 class="abc"> FireFox:{{urlData[8]}}</h4>
+                </br>
+            </br>
+        </br>
+                <a href="{{url_for('dashBoard')}}" class="btn">Select URL</a>
+				<a href="{{ url_for('logout') }}" class="btn">Logout</a>
+		</div>
+		</div>
+	</body>
+</html>

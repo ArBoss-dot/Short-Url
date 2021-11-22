@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Url Select dashBoard</title>
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+</head>
+<body>
+<div class="container">
+ <div class="row">
+        <div class="col-md-12">
+        </br>
+            <h2>Total URL Generated : {{UrlCount}}</h2>
+            <h2>{{msg}}</h2>
+            </br>
+            <p><h2>Select URL to see Statistics</h2></p>
+            <form method="POST">
+                    {{ form.csrf_token}}  
+                <div class="form-group">
+                    <label for="email">URL's:</label>
+                    {{ form.URL(class="form-control") }}
+                </div>
+                <div>
+                    <input type="submit" class="btn btn-success" btn-lg>
+                    <a href="{{ url_for('shortUrl') }}" class="btn btn-success">Gen short url</a>
+                </div>
+            </form> 
+        </div>
+    </br>
+ </div>
+</div> 
+<script>
+URL = document.getElementById('URL');
+
+URL.onchange = function(){
+ urlselect = URL.value;
+//  <!-- alert(country); --> 
+ fetch('url/' + urlselect).then(function(response){
+  response.json().then(function(data) {
+   optionHTML = '';
+   for (state of data.statecountry) {
+    optionHTML += '<option value="' + state.id +'">' + state.name + '</option>'
+   }
+   state_select.innerHTML = optionHTML;
+  });
+ });
+}
+// state_select.onchange = function(){
+//  city = state_select.value; 
+//  fetch('city/' + city).then(function(response){
+//   response.json().then(function(data) {
+//    optionHTML = '';
+//    for (city_rs of data.citylist) {
+//     optionHTML += '<option value="' + city_rs.id +'">' + city_rs.name + '</option>'
+//    }
+//    city_select.innerHTML = optionHTML;
+//   });
+//  });
+// }
+</script>
+</body>
+</html>

@@ -69,11 +69,25 @@ input:focus {
     font-style: oblique;
     font-weight: bold;
 }
-
-.bottom{
-    color: #236B8E;
-    font-style: oblique;
-    font-weight: bold;
+.abc1{
+ 
+    max-width: 100%;
+    margin: 0 auto;
+    color: #222D32;
+    text-align: left;
+    font-size:30px;
+    font-family: 'Paytone One', sans-serif;
+    line-height: 1em;
+}
+.abc{
+ 
+    max-width: 100%;
+    margin: 0 auto;
+    color: #222D32;
+    text-align: right;
+    font-size:30px;
+    font-family: 'Paytone One', sans-serif;
+    line-height: 1em;
 }
 
 
